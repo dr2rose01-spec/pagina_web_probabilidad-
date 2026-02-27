@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Estadístico y Probabilidad</title>
+    <style>
+        /* Estilos Generales */
+        :root {
+            --primary-color: #CC0000; /* Red de Thor */
+            --secondary-color: #003366; /* Azul Oscuro de Thor */
+            
+            /* Light Theme (Default) */
+            --background-color: #F0F0F0; /* Gris claro */
+            --surface-color: #FFFFFF; /* Blanco para superficies */
+            --text-color: #333333; /* Gris oscuro para texto */
+            --border-color: #BBBBBB; /* Gris medio para bordes */
+            --result-box-bg: #e9f5ff;
+            --result-box-border: #b3d7ff;
+        }
+
+        body[data-theme="dark"] {
+            --background-color: #121212;
+            --surface-color: #1E1E1E;
+            --text-color: #E0E0E0;
+            --border-color: #444;
+            --result-box-bg: #2a2a3a;
+            --result-box-border: #003366;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Navegación y Header */
+        header {
+            background-color: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        nav .nav-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-button {
+            background-color: transparent;
+            border: 1px solid transparent;
+            color: var(--secondary-color);
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover, #theme-toggle:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .nav-button.active {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 700;
+        }
+        
+        #theme-toggle {
+            font-size: 12px;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            background-color: var(--surface-color);
+        }
+
+        /* Secciones */
+        .content-section {
+            display: none;
+            padding: 30px;
+            margin-top: 20px;
+            background-color: var(--surface-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin: 20px 0;
+        }
+        
+        h2 {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            transition: border-color 0.3s;
+        }
+
+        /* Formularios y Botones */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button.secondary {
+            background-color: var(--secondary-color);
+        }
+        
+        /* Resultados y Tablas */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .result-item {
+            background-color: var(--background-color);
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        
+        .result-item strong {
+            display: block;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: var(--result-box-bg);
+            border: 1px solid var(--result-box-border);
+            color: var(--text-color);
+            border-radius: 5px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 1.1rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+        
+        tbody tr:nth-child(even) {
+            background-color: var(--background-color);
+            transition: background-color 0.3s;
+        }
+
+        /* Gráficos */
+        .chart-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .canvas-wrapper {
+             border: 1px solid var(--border-color);
+             padding: 15px;
+             border-radius: 5px;
+             transition: border-color 0.3s;
+        }
+        
+        canvas {
+            width: 100%;
+            height: 350px;
+            max-width: 100%;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .nav-container {
+                justify-content: flex-start;
+            }
+            .chart-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+             h1 {
+                font-size: 2rem;
+            }
+            .content-section {
+                padding: 15px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <nav>
+                <div class="nav-container">
+                    <button class="nav-button active" onclick="showSection('estadistica')">Estadística Descriptiva</button>
+                    <button class="nav-button" onclick="showSection('frecuencias')">Tabla de Frecuencias</button>
+                    <button class="nav-button" onclick="showSection('graficos')">Gráficos</button>
+                    <button class="nav-button" onclick="showSection('conjuntos')">Conjuntos</button>
+                    <button class="nav-button" onclick="showSection('probabilidad')">Probabilidad</button>
+                    <button class="nav-button" onclick="showSection('multiplicativa')">Regla Multiplicativa</button>
+                    <button class="nav-button" onclick="showSection('permutaciones')">Permutaciones y Combinaciones</button>
+                </div>
+            </nav>
+            <button id="theme-toggle">Cambiar Tema</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1>Calculadora De Probabilidad</h1>
+        <!-- All other sections remain the same -->
+        <section id="estadistica" class="content-section active">
+            <h2>Estadística Descriptiva</h2>
+            <div class="form-group">
+                <label for="datos">Ingresa los datos separados por comas (mínimo 20):</label>
+                <textarea id="datos" rows="4" placeholder="Ej: 23, 45, 12, 67, 89, 23, ..."></textarea>
+            </div>
+            <div class="button-group">
+                <button onclick="generarDatosAleatorios()">Generar 20 datos aleatorios</button>
+                <button onclick="calcularEstadisticas()">Calcular Todo</button>
+            </div>
+            <div id="resultados-estadistica" class="results-grid"></div>
+        </section>
+
+        <section id="frecuencias" class="content-section">
+            <h2>Tabla de Frecuencias</h2>
+            <p>La tabla se genera con los datos de la sección de "Estadística Descriptiva".</p>
+            <div id="tabla-frecuencias-container"></div>
+        </section>
+
+        <section id="graficos" class="content-section">
+            <h2>Gráficos Estadísticos (Canvas)</h2>
+            <p>Los gráficos se actualizan con los datos de la sección de "Estadística Descriptiva".</p>
+            <div class="chart-container">
+                <div class="canvas-wrapper">
+                    <h3>Histograma</h3>
+                    <canvas id="histogramaCanvas" width="500" height="350"></canvas>
+                </div>
+                <div class="canvas-wrapper">
+                    <h3>Polígono de Frecuencias</h3>
+                    <canvas id="poligonoCanvas" width="500" height="350"></canvas>
+                </div>
+                <div class="canvas-wrapper">
+                    <h3>Ojiva (Frecuencia Acumulada)</h3>
+                    <canvas id="ojivaCanvas" width="500" height="350"></canvas>
+                </div>
+                <div class="canvas-wrapper">
+                    <h3>Diagrama de Pareto</h3>
+                    <canvas id="paretoCanvas" width="500" height="350"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="conjuntos" class="content-section">
+            <h2>Operaciones con Conjuntos</h2>
+            <div class="form-group">
+                <label for="conjuntoA">Conjunto A (separado por comas):</label>
+                <input type="text" id="conjuntoA" placeholder="Ej: 1, 2, 3, 4">
+            </div>
+            <div class="form-group">
+                <label for="conjuntoB">Conjunto B (separado por comas):</label>
+                <input type="text" id="conjuntoB" placeholder="Ej: 3, 4, 5, 6">
+            </div>
+            <div class="form-group">
+                <label for="universo">Universo (separado por comas, opcional para complemento):</label>
+                <input type="text" id="universo" placeholder="Ej: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10">
+            </div>
+            <div class="button-group">
+                <button onclick="calcularConjuntos('union')">Unión (A ∪ B)</button>
+                <button onclick="calcularConjuntos('interseccion')">Intersección (A ∩ B)</button>
+                <button onclick="calcularConjuntos('diferenciaAB')">Diferencia (A - B)</button>
+                <button onclick="calcularConjuntos('diferenciaBA')">Diferencia (B - A)</button>
+                <button onclick="calcularConjuntos('complementoA')">Complemento (A')</button>
+                <button onclick="calcularConjuntos('complementoB')">Complemento (B')</button>
+            </div>
+            <div id="resultado-conjuntos" class="result-box"></div>
+        </section>
+
+        <section id="probabilidad" class="content-section">
+            <h2>Probabilidad Simple</h2>
+            <div class="form-group">
+                <label for="casosFavorables">Casos Favorables:</label>
+                <input type="number" id="casosFavorables" placeholder="Ej: 5">
+            </div>
+            <div class="form-group">
+                <label for="casosPosibles">Casos Posibles:</label>
+                <input type="number" id="casosPosibles" placeholder="Ej: 20">
+            </div>
+            <button onclick="calcularProbabilidadSimple()">Calcular Probabilidad</button>
+            <div id="resultado-probabilidad" class="result-box"></div>
+        </section>
+        
+        <section id="multiplicativa" class="content-section">
+            <h2>Regla Multiplicativa y Diagrama de Árbol</h2>
+            <div class="form-group">
+                <label for="probA">Probabilidad P(A):</label>
+                <input type="number" id="probA" step="0.01" min="0" max="1" placeholder="Ej: 0.5">
+            </div>
+            <div class="form-group">
+                <label for="probB_dado_A">Probabilidad P(B|A):</label>
+                <input type="number" id="probB_dado_A" step="0.01" min="0" max="1" placeholder="Ej: 0.4">
+            </div>
+            <button onclick="calcularReglaMultiplicativa()">Calcular P(A ∩ B)</button>
+            <div id="resultado-multiplicativa" class="result-box"></div>
+            <h3>Diagrama de Árbol</h3>
+            <div class="canvas-wrapper">
+                <canvas id="arbolCanvas" width="650" height="390"></canvas>
+            </div>
+        </section>
+
+        <section id="permutaciones" class="content-section">
+            <h2>Permutaciones y Combinaciones</h2>
+            <div class="form-group">
+                <label for="valorN">Número total de elementos (n):</label>
+                <input type="number" id="valorN" placeholder="Ej: 10">
+            </div>
+            <div class="form-group">
+                <label for="valorR">Número de elementos a elegir (r):</label>
+                <input type="number" id="valorR" placeholder="Ej: 3">
+            </div>
+            <button onclick="calcularPermutacionesCombinaciones()">Calcular</button>
+            <div id="resultado-permutaciones" class="result-box"></div>
+        </section>
+    </main>
+
+    <script>
+    // THEME TOGGLE SCRIPT
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+
+    function applyTheme(theme) {
+        if (theme === 'dark') {
+            body.setAttribute('data-theme', 'dark');
+            themeToggle.textContent = 'Modo Claro';
+        } else {
+            body.removeAttribute('data-theme');
+            themeToggle.textContent = 'Modo Oscuro';
+        }
+    }
+
+    themeToggle.addEventListener('click', () => {
+        let currentTheme = body.getAttribute('data-theme');
+        let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('theme', newTheme);
+        applyTheme(newTheme);
+        // Redraw graphs with correct colors for the new theme
+        if(datosProcesados.length > 0) {
+            generarGraficos();
+        }
+    });
+
+    // Apply saved theme on page load
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    applyTheme(savedTheme);
+
+
+    // Variable global para almacenar los datos procesados
+    let datosProcesados = [];
+    let frecuenciaDatos = {};
+
+    // Al cargar la página, activa la primera sección
+    document.addEventListener('DOMContentLoaded', () => {
+        showSection('estadistica');
+    });
+
+    /**
+     * NAVEGACIÓN
+     * Muestra la sección solicitada y oculta las demás.
+     * @param {string} sectionId - El ID de la sección a mostrar.
+     */
+    function showSection(sectionId) {
+        // Ocultar todas las secciones
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.style.display = 'none';
+            section.classList.remove('active');
+        });
+
+        // Quitar 'active' de todos los botones
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.classList.remove('active');
+        });
+
+        // Mostrar la sección correcta
+        const activeSection = document.getElementById(sectionId);
+        if (activeSection) {
+            activeSection.style.display = 'block';
+            activeSection.classList.add('active');
+        }
+
+        // Marcar el botón correcto como 'active'
+        const activeButton = document.querySelector(`.nav-button[onclick="showSection('${sectionId}')"]`);
+        if (activeButton) {
+            activeButton.classList.add('active');
+        }
+    }
+
+    /**
+     * Función para parsear una cadena de números separados por comas.
+     * @param {string} inputString - La cadena de texto.
+     * @returns {number[]} Un array de números.
+     */
+    function parsearNumeros(inputString) {
+        if (!inputString) return [];
+        return inputString
+            .split(',')
+            .map(item => parseFloat(item.trim()))
+            .filter(num => !isNaN(num));
+    }
+    
+    // =========================================
+    // 1 & 2 & 3) ESTADÍSTICA, FRECUENCIAS Y GRÁFICOS
+    // =========================================
+
+    /**
+     * Genera 20 números aleatorios entre 1 y 100 y los pone en el textarea.
+     */
+    function generarDatosAleatorios() {
+        const datosAleatorios = Array.from({ length: 20 }, () => Math.floor(Math.random() * 100) + 1);
+        document.getElementById('datos').value = datosAleatorios.join(', ');
+    }
+
+    /**
+     * Orquesta el cálculo de todas las estadísticas, tablas y gráficos.
+     */
+    function calcularEstadisticas() {
+        const datosInput = document.getElementById('datos').value;
+        const numeros = parsearNumeros(datosInput);
+        
+        if (numeros.length < 1) {
+            alert("Por favor, ingresa al menos un dato numérico.");
+            return;
+        }
+
+        datosProcesados = numeros.slice().sort((a, b) => a - b);
+        
+        const media = datosProcesados.reduce((a, b) => a + b, 0) / datosProcesados.length;
+        const mediana = calcularMediana(datosProcesados);
+        const moda = calcularModa(datosProcesados);
+        const minimo = datosProcesados[0];
+        const maximo = datosProcesados[datosProcesados.length - 1];
+        const rango = maximo - minimo;
+
+        const resultadosDiv = document.getElementById('resultados-estadistica');
+        resultadosDiv.innerHTML = `
+            <div class="result-item"><strong>Media</strong><span>${media.toFixed(2)}</span></div>
+            <div class="result-item"><strong>Mediana</strong><span>${mediana}</span></div>
+            <div class="result-item"><strong>Moda</strong><span>${moda}</span></div>
+            <div class="result-item"><strong>Mínimo</strong><span>${minimo}</span></div>
+            <div class="result-item"><strong>Máximo</strong><span>${maximo}</span></div>
+            <div class="result-item"><strong>Rango</strong><span>${rango}</span></div>
+        `;
+        
+        generarTablaFrecuencias();
+        generarGraficos();
+    }
+    
+    function calcularMediana(sortedData) {
+        const mid = Math.floor(sortedData.length / 2);
+        return sortedData.length % 2 !== 0 
+            ? sortedData[mid] 
+            : (sortedData[mid - 1] + sortedData[mid]) / 2;
+    }
+
+    function calcularModa(data) {
+        const frequency = {};
+        data.forEach(num => frequency[num] = (frequency[num] || 0) + 1);
+        
+        let maxFreq = 0;
+        let modas = [];
+        for (const key in frequency) {
+            if (frequency[key] > maxFreq) {
+                maxFreq = frequency[key];
+                modas = [key];
+            } else if (frequency[key] === maxFreq) {
+                modas.push(key);
+            }
+        }
+        
+        if (modas.length === Object.keys(frequency).length) return "No hay moda";
+        return modas.join(', ');
+    }
+    
+    function generarTablaFrecuencias() {
+        const totalDatos = datosProcesados.length;
+        frecuenciaDatos = {};
+        
+        datosProcesados.forEach(dato => {
+            frecuenciaDatos[dato] = (frecuenciaDatos[dato] || 0) + 1;
+        });
+
+        const valoresUnicos = Object.keys(frecuenciaDatos).map(Number).sort((a, b) => a - b);
+        
+        let tablaHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Valor (x)</th>
+                        <th>Frecuencia Absoluta (fi)</th>
+                        <th>Frecuencia Relativa (fr)</th>
+                        <th>Frecuencia Absoluta Acumulada (Fi)</th>
+                        <th>Frecuencia Relativa Acumulada (Fr)</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        let fiAcumulada = 0;
+        
+        valoresUnicos.forEach(valor => {
+            const fi = frecuenciaDatos[valor];
+            const fr = fi / totalDatos;
+            fiAcumulada += fi;
+            const frAcumulada = fiAcumulada / totalDatos;
+
+            tablaHTML += `
+                <tr>
+                    <td>${valor}</td>
+                    <td>${fi}</td>
+                    <td>${fr.toFixed(3)}</td>
+                    <td>${fiAcumulada}</td>
+                    <td>${frAcumulada.toFixed(3)}</td>
+                </tr>
+            `;
+        });
+
+        tablaHTML += `
+                </tbody>
+            </table>
+        `;
+        
+        document.getElementById('tabla-frecuencias-container').innerHTML = tablaHTML;
+    }
+    
+    function dibujarEjes(ctx, width, height, padding, xLabel, yLabel) {
+        const textColor = getComputedStyle(document.body).getPropertyValue('--text-color');
+        ctx.beginPath();
+        ctx.strokeStyle = textColor;
+        ctx.lineWidth = 1;
+        
+        ctx.moveTo(padding, padding);
+        ctx.lineTo(padding, height - padding);
+        ctx.lineTo(width - padding, height - padding);
+        ctx.stroke();
+
+        ctx.fillStyle = textColor;
+        ctx.textAlign = 'center';
+        ctx.fillText(xLabel, width / 2, height - padding / 4);
+        ctx.save();
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText(yLabel, -height / 2, padding / 2.5);
+        ctx.restore();
+    }
+    
+    function generarGraficos() {
+        if (Object.keys(frecuenciaDatos).length === 0) return;
+
+        const datosParaGrafico = Object.entries(frecuenciaDatos).map(([valor, frec]) => ({
+            valor: parseFloat(valor),
+            frec,
+        }))
+        .sort((a,b) => a.valor - b.valor);
+
+        dibujarHistograma(datosParaGrafico);
+        dibujarPoligono(datosParaGrafico);
+        dibujarOjiva(datosParaGrafico);
+        dibujarPareto(frecuenciaDatos);
+    }
+
+    function dibujarHistograma(data) {
+        const canvas = document.getElementById('histogramaCanvas');
+        const ctx = canvas.getContext('2d');
+        const { width, height } = canvas;
+        const padding = 50;
+        const textColor = getComputedStyle(document.body).getPropertyValue('--text-color');
+        
+        ctx.clearRect(0, 0, width, height);
+        dibujarEjes(ctx, width, height, padding, 'Valores', 'Frecuencia');
+        
+        const maxFreq = Math.max(...data.map(d => d.frec));
+        const barWidth = (width - 2 * padding) / data.length * 0.9;
+        const xStep = (width - 2 * padding) / data.length;
+
+        ctx.fillStyle = 'rgba(204, 0, 0, 0.7)'; // Thor's Red
+        ctx.textAlign = 'center';
+
+        data.forEach((item, i) => {
+            const barHeight = (item.frec / maxFreq) * (height - 2 * padding);
+            const x = padding + i * xStep;
+            const y = height - padding - barHeight;
+
+            ctx.fillRect(x, y, barWidth, barHeight);
+
+            ctx.fillStyle = textColor;
+            ctx.fillText(item.valor, x + barWidth / 2, height - padding + 15);
+        });
+    }
+
+    function dibujarPoligono(data) {
+        const canvas = document.getElementById('poligonoCanvas');
+        const ctx = canvas.getContext('2d');
+        const { width, height } = canvas;
+        const padding = 50;
+
+        ctx.clearRect(0, 0, width, height);
+        dibujarEjes(ctx, width, height, padding, 'Valores', 'Frecuencia');
+        
+        const maxFreq = Math.max(...data.map(d => d.frec));
+        const xStep = (width - 2 * padding) / data.length;
+
+        ctx.strokeStyle = '#FFD700'; // Thor's Gold
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+
+        const getPointY = (freq) => height - padding - (freq / maxFreq) * (height - 2 * padding);
+        const getPointX = (i) => padding + i * xStep + xStep / 2;
+        
+        ctx.moveTo(getPointX(-0.5), getPointY(0));
+        data.forEach((item, i) => {
+            ctx.lineTo(getPointX(i), getPointY(item.frec));
+        });
+        ctx.lineTo(getPointX(data.length - 0.5), getPointY(0));
+        ctx.stroke();
+
+        ctx.fillStyle = '#FFD700';
+        data.forEach((item, i) => {
+            ctx.beginPath();
+            ctx.arc(getPointX(i), getPointY(item.frec), 4, 0, 2 * Math.PI);
+            ctx.fill();
+        });
+    }
+
+    function dibujarOjiva(data) {
+        const canvas = document.getElementById('ojivaCanvas');
+        const ctx = canvas.getContext('2d');
+        const { width, height } = canvas;
+        const padding = 60;
+        
+        ctx.clearRect(0, 0, width, height);
+        dibujarEjes(ctx, width, height, padding, 'Valores', 'Frec. Acumulada');
+        
+        let acumulada = 0;
+        const datosAcumulados = data.map(item => ({ valor: item.valor, frec: acumulada += item.frec }));
+        const maxAcumulada = acumulada;
+        const xStep = (width - 2 * padding) / data.length;
+
+        ctx.strokeStyle = '#003366'; // Thor's Blue
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(padding, height - padding);
+
+        const getPointY = (freq) => height - padding - (freq / maxAcumulada) * (height - 2 * padding);
+        
+        datosAcumulados.forEach((item, i) => {
+            const x = padding + (i + 1) * xStep;
+            ctx.lineTo(x, getPointY(item.frec));
+        });
+        ctx.stroke();
+
+        ctx.fillStyle = '#003366';
+        ctx.textAlign = 'center';
+        datosAcumulados.forEach((item, i) => {
+            const x = padding + (i + 1) * xStep;
+            ctx.beginPath();
+            ctx.arc(x, getPointY(item.frec), 4, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.fillText(item.valor, x, height - padding + 15);
+        });
+    }
+
+    function dibujarPareto(frecuenciaOriginal) {
+        const canvas = document.getElementById('paretoCanvas');
+        const ctx = canvas.getContext('2d');
+        const { width, height } = canvas;
+        const padding = 60;
+        const textColor = getComputedStyle(document.body).getPropertyValue('--text-color');
+
+        ctx.clearRect(0, 0, width, height);
+        dibujarEjes(ctx, width, height, padding, 'Categorías', 'Frecuencia');
+
+        const sortedData = Object.entries(frecuenciaOriginal)
+            .sort(([,a],[,b]) => b-a)
+            .map(([valor, frec]) => ({ valor, frec }));
+
+        const total = sortedData.reduce((sum, item) => sum + item.frec, 0);
+        const maxFreq = sortedData.length > 0 ? sortedData[0].frec : 0;
+        
+        const barWidth = (width - 2 * padding) / sortedData.length * 0.9;
+        const xStep = (width - 2 * padding) / sortedData.length;
+        ctx.fillStyle = 'rgba(204, 0, 0, 0.7)'; // Thor's Red
+        ctx.textAlign = 'center';
+
+        sortedData.forEach((item, i) => {
+            const barHeight = (item.frec / maxFreq) * (height - 2 * padding);
+            const x = padding + i * xStep;
+            const y = height - padding - barHeight;
+            ctx.fillRect(x, y, barWidth, barHeight);
+            ctx.fillStyle = textColor;
+            ctx.fillText(item.valor, x + barWidth / 2, height - padding + 15);
+        });
+
+        let cumulative = 0;
+        const cumulativeData = sortedData.map(item => {
+            cumulative += item.frec;
+            return (cumulative / total) * 100;
+        });
+
+        ctx.strokeStyle = '#FFD700'; // Thor's Gold
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        
+        const getLineY = (percent) => height - padding - (percent / 100) * (height - 2 * padding);
+
+        sortedData.forEach((item, i) => {
+            const x = padding + i * xStep + barWidth / 2;
+            const y = getLineY(cumulativeData[i]);
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        });
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD700'; // Thor's Gold
+        ctx.textAlign = 'right';
+        for (let i = 0; i <= 10; i++) {
+            const percent = i * 10;
+            const y = getLineY(percent);
+            ctx.fillText(`${percent}% -`, width - padding + 25, y + 3);
+        }
+    }
+
+
+    // =========================================
+    // 4) OPERACIONES CON CONJUNTOS
+    // =========================================
+    
+    function getConjunto(inputId) {
+        const raw = document.getElementById(inputId).value;
+        if (!raw.trim()) return new Set();
+        return new Set(raw.split(',').map(s => s.trim()).filter(Boolean));
+    }
+
+    function calcularConjuntos(operacion) {
+        const setA = getConjunto('conjuntoA');
+        const setB = getConjunto('conjuntoB');
+        const universo = getConjunto('universo');
+        let resultado = new Set();
+
+        switch (operacion) {
+            case 'union':
+                resultado = new Set([...setA, ...setB]);
+                break;
+            case 'interseccion':
+                resultado = new Set([...setA].filter(x => setB.has(x)));
+                break;
+            case 'diferenciaAB':
+                resultado = new Set([...setA].filter(x => !setB.has(x)));
+                break;
+            case 'diferenciaBA':
+                resultado = new Set([...setB].filter(x => !setA.has(x)));
+                break;
+            case 'complementoA':
+                if (universo.size === 0) {
+                    alert("Se necesita un universo para calcular el complemento.");
+                    return;
+                }
+                resultado = new Set([...universo].filter(x => !setA.has(x)));
+                break;
+             case 'complementoB':
+                if (universo.size === 0) {
+                    alert("Se necesita un universo para calcular el complemento.");
+                    return;
+                }
+                resultado = new Set([...universo].filter(x => !setB.has(x)));
+                break;
+        }
+
+        const resultadoArray = [...resultado].sort();
+        document.getElementById('resultado-conjuntos').textContent = `{ ${resultadoArray.join(', ')} }`;
+    }
+
+    // =========================================
+    // 5) PROBABILIDAD SIMPLE
+    // =========================================
+    
+    function calcularProbabilidadSimple() {
+        const favorables = parseFloat(document.getElementById('casosFavorables').value);
+        const posibles = parseFloat(document.getElementById('casosPosibles').value);
+
+        const resultadoDiv = document.getElementById('resultado-probabilidad');
+        if (isNaN(favorables) || isNaN(posibles) || posibles <= 0 || favorables < 0 || favorables > posibles) {
+            resultadoDiv.textContent = 'Valores inválidos. Asegúrate de que los casos posibles > 0 y favorables <= posibles.';
+            return;
+        }
+
+        const probabilidad = favorables / posibles;
+        resultadoDiv.innerHTML = `
+            Probabilidad Decimal: ${probabilidad.toFixed(4)}<br>
+            Probabilidad en Porcentaje: ${(probabilidad * 100).toFixed(2)}%
+        `;
+    }
+
+    // =========================================
+    // 6) REGLA MULTIPLICATIVA Y ÁRBOL
+    // =========================================
+    
+    function calcularReglaMultiplicativa() {
+        const pA = parseFloat(document.getElementById('probA').value);
+        const pB_dado_A = parseFloat(document.getElementById('probB_dado_A').value);
+        
+        const resultadoDiv = document.getElementById('resultado-multiplicativa');
+        if (isNaN(pA) || isNaN(pB_dado_A) || pA < 0 || pA > 1 || pB_dado_A < 0 || pB_dado_A > 1) {
+            resultadoDiv.textContent = 'Valores de probabilidad inválidos. Deben estar entre 0 y 1.';
+            return;
+        }
+
+        const pA_inter_B = pA * pB_dado_A;
+        resultadoDiv.textContent = `P(A ∩ B) = P(A) * P(B|A) = ${pA.toFixed(2)} * ${pB_dado_A.toFixed(2)} = ${pA_inter_B.toFixed(4)}`;
+        
+        dibujarArbol(pA, pB_dado_A);
+    }
+    
+    function dibujarArbol(pA, pB_dado_A) {
+        const canvas = document.getElementById('arbolCanvas');
+        const ctx = canvas.getContext('2d');
+        const { width, height } = canvas;
+        const textColor = getComputedStyle(document.body).getPropertyValue('--text-color');
+        ctx.clearRect(0, 0, width, height);
+
+        ctx.font = '14px Arial';
+        ctx.textAlign = 'center';
+
+        const start = { x: 65, y: height / 2 };
+        const nodeA = { x: 260, y: height / 4 };
+        const nodeNotA = { x: 260, y: height * 3 / 4 };
+        const nodeB = { x: 455, y: height / 8 };
+        const nodeNotB_A = { x: 455, y: height * 3 / 8 };
+
+        ctx.beginPath();
+        ctx.moveTo(start.x, start.y);
+        ctx.lineTo(nodeA.x, nodeA.y);
+        ctx.moveTo(start.x, start.y);
+        ctx.lineTo(nodeNotA.x, nodeNotA.y);
+        ctx.moveTo(nodeA.x, nodeA.y);
+        ctx.lineTo(nodeB.x, nodeB.y);
+        ctx.moveTo(nodeA.x, nodeA.y);
+        ctx.lineTo(nodeNotB_A.x, nodeNotB_A.y);
+        ctx.strokeStyle = textColor;
+        ctx.stroke();
+
+        ctx.fillStyle = '#FFD700'; // Thor's Gold
+        ctx.beginPath(); ctx.arc(start.x, start.y, 5, 0, 2 * Math.PI); ctx.fill();
+        ctx.beginPath(); ctx.arc(nodeA.x, nodeA.y, 5, 0, 2 * Math.PI); ctx.fill();
+        ctx.beginPath(); ctx.arc(nodeNotA.x, nodeNotA.y, 5, 0, 2 * Math.PI); ctx.fill();
+        ctx.beginPath(); ctx.arc(nodeB.x, nodeB.y, 5, 0, 2 * Math.PI); ctx.fill();
+        ctx.beginPath(); ctx.arc(nodeNotB_A.x, nodeNotB_A.y, 5, 0, 2 * Math.PI); ctx.fill();
+        
+        ctx.fillStyle = textColor;
+        ctx.fillText('Inicio', start.x, start.y - 15);
+        ctx.fillText('A', nodeA.x + 20, nodeA.y);
+        ctx.fillText("A'", nodeNotA.x + 20, nodeNotA.y);
+        ctx.fillText('B', nodeB.x + 20, nodeB.y);
+        ctx.fillText("B'", nodeNotB_A.x + 20, nodeNotB_A.y);
+
+        ctx.fillStyle = '#CC0000'; // Thor's Red
+        ctx.fillText(`P(A) = ${pA.toFixed(2)}`, (start.x + nodeA.x) / 2, (start.y + nodeA.y) / 2 - 5);
+        ctx.fillText(`P(A') = ${(1 - pA).toFixed(2)}`, (start.x + nodeNotA.x) / 2, (start.y + nodeNotA.y) / 2 + 15);
+        ctx.fillText(`P(B|A) = ${pB_dado_A.toFixed(2)}`, (nodeA.x + nodeB.x) / 2, (nodeA.y + nodeB.y) / 2 - 5);
+        ctx.fillText(`P(B'|A) = ${(1 - pB_dado_A).toFixed(2)}`, (nodeA.x + nodeNotB_A.x) / 2, (nodeA.y + nodeNotB_A.y) / 2 + 15);
+    }
+
+    // =========================================
+    // 7) PERMUTACIONES Y COMBINACIONES
+    // =========================================
+    
+    function factorial(n) {
+        if (n < 0) return NaN;
+        if (n === 0 || n === 1) return 1;
+        let result = 1;
+        for (let i = 2; i <= n; i++) {
+            result *= i;
+        }
+        return result;
+    }
+
+    function calcularPermutacionesCombinaciones() {
+        const n = parseInt(document.getElementById('valorN').value);
+        const r = parseInt(document.getElementById('valorR').value);
+        const resultadoDiv = document.getElementById('resultado-permutaciones');
+
+        if (isNaN(n) || isNaN(r) || n < 0 || r < 0 || r > n) {
+            resultadoDiv.textContent = 'Valores inválidos. Asegúrate de que n >= r >= 0.';
+            return;
+        }
+
+        const permutaciones = factorial(n) / factorial(n - r);
+        const combinaciones = permutaciones / factorial(r);
+
+        resultadoDiv.innerHTML = `
+            Permutaciones (nPr): <strong>${permutaciones.toLocaleString()}</strong><br>
+            Combinaciones (nCr): <strong>${combinaciones.toLocaleString()}</strong>
+        `;
+    }
+
+    </script>
+</body>
+</html>
